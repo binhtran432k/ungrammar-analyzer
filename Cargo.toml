@@ -1,0 +1,19 @@
+[workspace]
+members = ["crates/*", "xtask"]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Binh Tran <binhtran432k@gmail.com>"]
+
+[workspace.dependencies]
+# local crates
+
+# local crates that aren't published to crates.io. These should not have versions.
+sourcegen = { path = "./crates/sourcegen" }
+
+# non-local crates
+expect-test = "1.5.0"
+tracing = "0.1.40"
+xshell = "0.2.6"
