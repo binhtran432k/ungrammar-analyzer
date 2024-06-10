@@ -33,10 +33,8 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         (">", "R_ANGLE"),
         (":", "COLON"),
     ],
-    keywords: &[
-    ],
-    contextual_keywords: &[
-    ],
+    keywords: &[],
+    contextual_keywords: &[],
     literals: &["STRING", "INT_NUMBER", "FLOAT_NUMBER", "HEX_STRING"],
     tokens: &[
         "ERROR",

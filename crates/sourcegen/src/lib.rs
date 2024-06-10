@@ -8,11 +8,7 @@ use xshell::{cmd, Shell};
 pub fn list_rust_files(dir: &Path) -> Vec<PathBuf> {
     let mut res = list_files(dir);
     res.retain(|it| {
-        it.file_name()
-            .unwrap_or_default()
-            .to_str()
-            .unwrap_or_default()
-            .ends_with(".rs")
+        it.file_name().unwrap_or_default().to_str().unwrap_or_default().ends_with(".rs")
     });
     res
 }
@@ -25,12 +21,8 @@ pub fn list_files(dir: &Path) -> Vec<PathBuf> {
             let entry = entry.unwrap();
             let file_type = entry.file_type().unwrap();
             let path = entry.path();
-            let is_hidden = path
-                .file_name()
-                .unwrap_or_default()
-                .to_str()
-                .unwrap_or_default()
-                .starts_with('.');
+            let is_hidden =
+                path.file_name().unwrap_or_default().to_str().unwrap_or_default().starts_with('.');
             if !is_hidden {
                 if file_type.is_dir() {
                     work.push(path);
@@ -78,12 +70,8 @@ impl CommentBlock {
 
         let lines = text.lines().map(str::trim_start);
 
-        let dummy_block = CommentBlock {
-            id: String::new(),
-            line: 0,
-            contents: Vec::new(),
-            is_doc: false,
-        };
+        let dummy_block =
+            CommentBlock { id: String::new(), line: 0, contents: Vec::new(), is_doc: false };
         let mut block = dummy_block.clone();
         for (line_num, line) in lines.enumerate() {
             match line.strip_prefix("//") {
@@ -121,12 +109,7 @@ pub struct Location {
 
 impl fmt::Display for Location {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let path = self
-            .file
-            .strip_prefix(project_root())
-            .unwrap()
-            .display()
-            .to_string();
+        let path = self.file.strip_prefix(project_root()).unwrap().display().to_string();
         let path = path.replace('\\', "/");
         let name = self.file.file_name().unwrap();
         write!(
@@ -140,9 +123,7 @@ impl fmt::Display for Location {
 }
 
 fn ensure_rustfmt(sh: &Shell) {
-    let version = cmd!(sh, "rustup run stable rustfmt --version")
-        .read()
-        .unwrap_or_default();
+    let version = cmd!(sh, "rustup run stable rustfmt --version").read().unwrap_or_default();
     if !version.contains("stable") {
         panic!(
             "Failed to run rustfmt from toolchain 'stable'. \
@@ -206,12 +187,7 @@ fn normalize_newlines(s: &str) -> String {
 
 pub fn project_root() -> PathBuf {
     let dir = env!("CARGO_MANIFEST_DIR");
-    let res = PathBuf::from(dir)
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .to_owned();
+    let res = PathBuf::from(dir).parent().unwrap().parent().unwrap().to_owned();
     assert!(res.join("crates").exists());
     res
 }

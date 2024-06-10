@@ -1,7 +1,7 @@
 use super::*;
 
-use std::fmt::Write;
 use expect_test::{expect, Expect};
+use std::fmt::Write;
 
 fn check_lexing(src: &str, expect: Expect) {
     let actual: String = tokenize(src).fold(String::new(), |mut output, token| {
