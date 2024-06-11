@@ -1,0 +1,6 @@
+TOKEN "'hello'"
+WHITESPACE " "
+TOKEN "'\\'\\\\no escape'"
+WHITESPACE " "
+TOKEN "'multi\nline'"
+WHITESPACE "\n"
