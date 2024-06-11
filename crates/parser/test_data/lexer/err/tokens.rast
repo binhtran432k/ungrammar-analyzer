@@ -1,0 +1,11 @@
+TOKEN "''" error: empty token literal
+WHITESPACE "\n"
+TOKEN "'\\💩'" error: unknown character escape
+WHITESPACE "\n"
+TOKEN "'\\●'" error: unknown character escape
+WHITESPACE "\n"
+TOKEN "'\\n'" error: unknown character escape
+WHITESPACE "\n"
+TOKEN "'\\r'" error: unknown character escape
+WHITESPACE "\n"
+TOKEN "'Hello,\\ World!'" error: unknown character escape

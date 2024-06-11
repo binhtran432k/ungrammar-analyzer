@@ -6,7 +6,7 @@ use super::ast_src::{KindsSrc, KINDS_SRC};
 
 pub fn generate() {
     let syntax_kinds = generate_syntax_kinds(KINDS_SRC);
-    let syntax_kinds_file = project_root().join("crates/cobol_parser/src/syntax_kind/generated.rs");
+    let syntax_kinds_file = project_root().join("crates/parser/src/syntax_kind/generated.rs");
     ensure_file_contents(syntax_kinds_file.as_path(), &syntax_kinds);
 }
 
@@ -30,39 +30,13 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
     let punctuation =
         grammar.punct.iter().map(|(_token, name)| format_ident!("{}", name)).collect::<Vec<_>>();
 
-    let x = |&name| format_ident!("{}_KW", to_upper_snake_case_from_kebab_case(name));
-
-    let full_keywords_values = grammar.keywords.to_vec();
-    let full_keywords = full_keywords_values.iter().map(x);
-
-    let contextual_keywords_values = &grammar.contextual_keywords;
-    let contextual_keywords = contextual_keywords_values.iter().map(x);
-
-    let all_keywords_values = full_keywords_values
-        .iter()
-        .chain(grammar.contextual_keywords.iter())
-        .copied()
-        .collect::<Vec<_>>();
-    let all_keywords_idents = all_keywords_values.iter().map(|kw| {
-        if kw.contains('-') {
-            quote! { #kw }
-        } else {
-            let ident = format_ident!("{}", kw);
-            quote! { #ident }
-        }
-    });
-    let all_keywords = all_keywords_values.iter().map(x).collect::<Vec<_>>();
-
-    let literals =
-        grammar.literals.iter().map(|name| format_ident!("{}", name)).collect::<Vec<_>>();
-
     let tokens = grammar.tokens.iter().map(|name| format_ident!("{}", name)).collect::<Vec<_>>();
 
     let nodes = grammar.nodes.iter().map(|name| format_ident!("{}", name)).collect::<Vec<_>>();
 
     let ast = quote! {
         #![allow(bad_style, missing_docs, unreachable_pub)]
-        /// The kind of syntax node, e.g. `IDENT`, `USE_KW`, or `STRUCT`.
+        /// The kind of syntax node, e.g. `NODE`, `TOKEN`, or `STAR`.
         #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
         #[repr(u16)]
         pub enum SyntaxKind {
@@ -73,9 +47,9 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
             #[doc(hidden)]
             EOF,
             #(#punctuation,)*
-            #(#all_keywords,)*
-            #(#literals,)*
             #(#tokens,)*
+            // Technical kind so that we can mark the end of tokens
+            #[doc(hidden)]
             __FIRST,
             #(#nodes,)*
 
@@ -86,34 +60,8 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
         use self::SyntaxKind::*;
 
         impl SyntaxKind {
-            pub fn is_keyword(self) -> bool {
-                matches!(self, #(#all_keywords)|*)
-            }
-
             pub fn is_punct(self) -> bool {
                 matches!(self, #(#punctuation)|*)
-            }
-
-            pub fn is_literal(self) -> bool {
-                matches!(self, #(#literals)|*)
-            }
-
-            pub fn from_keyword(ident: &str) -> Option<SyntaxKind> {
-                let ident = ident.to_ascii_uppercase();
-                let kw = match ident.as_str() {
-                    #(#full_keywords_values => #full_keywords,)*
-                    _ => return None,
-                };
-                Some(kw)
-            }
-
-            pub fn from_contextual_keyword(ident: &str) -> Option<SyntaxKind> {
-                let ident = ident.to_ascii_uppercase();
-                let kw = match ident.as_str() {
-                    #(#contextual_keywords_values => #contextual_keywords,)*
-                    _ => return None,
-                };
-                Some(kw)
             }
 
             pub fn from_char(c: char) -> Option<SyntaxKind> {
@@ -128,14 +76,8 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
         #[macro_export]
         macro_rules! T {
             #([#punctuation_values] => { $crate::SyntaxKind::#punctuation };)*
-            #([#all_keywords_idents] => { $crate::SyntaxKind::#all_keywords };)*
-            [ident] => { $crate::SyntaxKind::IDENT };
         }
     };
 
     add_preamble("sourcegen_ast", reformat(ast.to_string()))
-}
-
-fn to_upper_snake_case_from_kebab_case(s: &str) -> String {
-    s.chars().map(|c| if c == '-' { '_' } else { c.to_ascii_uppercase() }).collect()
 }

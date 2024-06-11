@@ -1,0 +1,4 @@
+NODE "hello"
+WHITESPACE "\r" error: unexpected `\r`, only Unix-style line endings allowed
+WHITESPACE "\n"
+NODE "world"
