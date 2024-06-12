@@ -10,6 +10,7 @@ authors = ["Binh Tran <binhtran432k@gmail.com>"]
 [workspace.dependencies]
 # local crates
 lexer = { path = "./crates/lexer" }
+limit = { path = "./crates/limit" }
 stdx = { path = "./crates/stdx" }
 
 # local crates that aren't published to crates.io. These should not have versions.
