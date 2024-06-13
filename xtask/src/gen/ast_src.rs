@@ -16,6 +16,6 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         ("(", "L_PAREN"),
         (")", "R_PAREN"),
     ],
-    tokens: &["ERROR", "NODE", "TOKEN", "WHITESPACE", "COMMENT"],
-    nodes: &["SOURCE_FILE"],
+    tokens: &["ERROR", "IDENT", "STR", "WHITESPACE", "COMMENT"],
+    nodes: &["SOURCE_FILE", "NODE", "TOKEN"],
 };
