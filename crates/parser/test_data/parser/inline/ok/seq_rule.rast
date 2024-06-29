@@ -1,0 +1,14 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "SourceFile"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    SEQ_RULE
+      TOKEN
+        STRING "'Hello'"
+      WHITESPACE " "
+      TOKEN
+        STRING "'World'"
+  WHITESPACE "\n"

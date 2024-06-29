@@ -1,0 +1,26 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "SOURCE"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    ALT_RULE
+      ALT_RULE
+        OPT_RULE
+          TOKEN
+            STRING "'a'"
+          QUESTION "?"
+        WHITESPACE " "
+        PIPE "|"
+        WHITESPACE " "
+        REP_RULE
+          TOKEN
+            STRING "'b'"
+          STAR "*"
+      WHITESPACE " "
+      PIPE "|"
+      WHITESPACE " "
+      TOKEN
+        STRING "'c'"
+  WHITESPACE "\n"

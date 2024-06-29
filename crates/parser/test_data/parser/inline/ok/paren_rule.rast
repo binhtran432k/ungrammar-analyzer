@@ -1,0 +1,13 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "SourceFile"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    PAREN_RULE
+      L_PAREN "("
+      TOKEN
+        STRING "'Hello'"
+      R_PAREN ")"
+  WHITESPACE "\n"

@@ -1,0 +1,23 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "SourceFile"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    ALT_RULE
+      TOKEN
+        STRING "'Hello'"
+      WHITESPACE " "
+      PIPE "|"
+  WHITESPACE "\n"
+  NODE
+    NAME
+      IDENT "Hello"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    TOKEN
+      STRING "'Hello'"
+  WHITESPACE "\n"
+error 22: expected rule

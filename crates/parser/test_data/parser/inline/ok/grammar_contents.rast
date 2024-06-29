@@ -1,0 +1,44 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "SourceFile"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE "\n  "
+    SEQ_RULE
+      REP_RULE
+        PAREN_RULE
+          L_PAREN "("
+          SEQ_RULE
+            NAME_REF
+              IDENT "Hello"
+            WHITESPACE " "
+            LABELED_RULE
+              LABEL
+                IDENT "name"
+              COLON ":"
+              TOKEN
+                STRING "'World'"
+          R_PAREN ")"
+        STAR "*"
+      WHITESPACE " "
+      OPT_RULE
+        TOKEN
+          STRING "'!'"
+        QUESTION "?"
+  WHITESPACE "\n"
+  NODE
+    NAME
+      IDENT "Hello"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE "\n  "
+    ALT_RULE
+      TOKEN
+        STRING "'Hello'"
+      WHITESPACE "\n"
+      PIPE "|"
+      WHITESPACE " "
+      TOKEN
+        STRING "'Hi'"
+  WHITESPACE "\n"

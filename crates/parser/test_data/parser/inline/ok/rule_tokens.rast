@@ -1,0 +1,10 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "Hello"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    TOKEN
+      STRING "'Hello'"
+  WHITESPACE "\n"

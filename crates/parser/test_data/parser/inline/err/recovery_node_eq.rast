@@ -1,0 +1,16 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "SourceFile"
+  WHITESPACE "\n"
+  NODE
+    NAME
+      IDENT "SourceFileB"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    TOKEN
+      STRING "'Hello'"
+  WHITESPACE "\n"
+error 10: expected EQ
+error 10: expected rule

@@ -1,0 +1,2 @@
+Hello = 'Hello' | 'Hi'
+HelloB = 'Hello' | 'Hi' | 'Hey'

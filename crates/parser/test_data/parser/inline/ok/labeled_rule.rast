@@ -1,0 +1,14 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "SourceFile"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    LABELED_RULE
+      LABEL
+        IDENT "name"
+      COLON ":"
+      TOKEN
+        STRING "'World'"
+  WHITESPACE "\n"

@@ -161,5 +161,5 @@ fn n_attached_trivias<'a>(
     _kind: SyntaxKind,
     _trivias: impl Iterator<Item = (SyntaxKind, &'a str)>,
 ) -> usize {
-    todo!()
+    0
 }

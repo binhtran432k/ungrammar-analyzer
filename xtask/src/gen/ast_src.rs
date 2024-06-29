@@ -16,6 +16,22 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         ("(", "L_PAREN"),
         (")", "R_PAREN"),
     ],
-    tokens: &["ERROR", "IDENT", "STR", "WHITESPACE", "COMMENT"],
-    nodes: &["SOURCE_FILE", "NODE", "TOKEN"],
+    tokens: &["ERROR", "IDENT", "STRING", "WHITESPACE", "COMMENT"],
+    #[rustfmt::skip]
+    nodes: &[
+        "GRAMMAR",
+        "NODE",
+        // atoms
+        "LABEL",
+        "PAREN_RULE",
+        // unary
+        "NAME",
+        "NAME_REF",
+        "TOKEN",
+        "SEQ_RULE",
+        "LABELED_RULE",
+        "ALT_RULE",
+        "OPT_RULE",
+        "REP_RULE",
+    ],
 };
