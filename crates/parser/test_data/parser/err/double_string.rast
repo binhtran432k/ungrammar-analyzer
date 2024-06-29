@@ -1,0 +1,17 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "Hello"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    ERROR
+      ERROR "\""
+  NODE
+    NAME
+      IDENT "Hello"
+    ERROR
+      ERROR "\""
+error 8: expected rule
+error 14: expected EQ
+error 14: expected rule

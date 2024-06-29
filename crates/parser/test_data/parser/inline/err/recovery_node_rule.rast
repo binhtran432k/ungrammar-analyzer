@@ -1,0 +1,17 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "SourceFile"
+    WHITESPACE " "
+    EQ "="
+  WHITESPACE "\n"
+  NODE
+    NAME
+      IDENT "Hello"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    TOKEN
+      STRING "'Hello'"
+  WHITESPACE "\n"
+error 12: expected rule

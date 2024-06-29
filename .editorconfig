@@ -1,0 +1,4 @@
+root = true
+
+[*.{rast,ungram}]
+indent_size = 2

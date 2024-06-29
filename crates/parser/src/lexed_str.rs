@@ -146,7 +146,7 @@ impl<'a> Converter<'a> {
                 err = "unexpected `\\r`, only Unix-style line endings allowed";
                 WHITESPACE
             }
-            lexer::TokenKind::Ident => NODE,
+            lexer::TokenKind::Ident => IDENT,
             lexer::TokenKind::Str { terminated } => {
                 let len = token_text.len();
                 if !terminated {
@@ -157,7 +157,7 @@ impl<'a> Converter<'a> {
                     let text = &text[..i];
                     err = unescape_string_error_message(text);
                 }
-                TOKEN
+                STRING
             }
             lexer::TokenKind::Eq => T![=],
             lexer::TokenKind::Star => T![*],

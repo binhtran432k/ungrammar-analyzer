@@ -1,0 +1,37 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "Hello"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    ALT_RULE
+      TOKEN
+        STRING "'Hello'"
+      WHITESPACE " "
+      PIPE "|"
+      WHITESPACE " "
+      TOKEN
+        STRING "'Hi'"
+  WHITESPACE "\n"
+  NODE
+    NAME
+      IDENT "HelloB"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    ALT_RULE
+      ALT_RULE
+        TOKEN
+          STRING "'Hello'"
+        WHITESPACE " "
+        PIPE "|"
+        WHITESPACE " "
+        TOKEN
+          STRING "'Hi'"
+      WHITESPACE " "
+      PIPE "|"
+      WHITESPACE " "
+      TOKEN
+        STRING "'Hey'"
+  WHITESPACE "\n"

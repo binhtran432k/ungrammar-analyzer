@@ -1,11 +1,11 @@
-STR "''" error: empty token literal
+STRING "''" error: empty token literal
 WHITESPACE "\n"
-STR "'\\💩'" error: unknown character escape
+STRING "'\\💩'" error: unknown character escape
 WHITESPACE "\n"
-STR "'\\●'" error: unknown character escape
+STRING "'\\●'" error: unknown character escape
 WHITESPACE "\n"
-STR "'\\n'" error: unknown character escape
+STRING "'\\n'" error: unknown character escape
 WHITESPACE "\n"
-STR "'\\r'" error: unknown character escape
+STRING "'\\r'" error: unknown character escape
 WHITESPACE "\n"
-STR "'Hello,\\ World!'" error: unknown character escape
+STRING "'Hello,\\ World!'" error: unknown character escape

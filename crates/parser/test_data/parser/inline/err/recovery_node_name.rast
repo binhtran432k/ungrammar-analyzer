@@ -1,0 +1,19 @@
+GRAMMAR
+  NODE
+    NAME
+      IDENT "Hello"
+    WHITESPACE " "
+    EQ "="
+    WHITESPACE " "
+    TOKEN
+      STRING "'Hello'"
+  WHITESPACE "\n"
+  NODE
+    ERROR
+      EQ "="
+    WHITESPACE " "
+    TOKEN
+      STRING "'World'"
+  WHITESPACE "\n"
+error 16: expected a name
+error 17: expected EQ

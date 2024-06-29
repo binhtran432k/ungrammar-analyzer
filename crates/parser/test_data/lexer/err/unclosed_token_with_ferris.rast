@@ -1,1 +1,1 @@
-STR "'🦀" error: missing trailing `'` symbol to terminate the token literal
+STRING "'🦀" error: missing trailing `'` symbol to terminate the token literal
