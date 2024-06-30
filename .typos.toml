@@ -1,0 +1,9 @@
+[files]
+extend-exclude = ["*.rast", "crates/parser/test_data/lexer/err/"]
+
+[default]
+extend-ignore-re = []
+
+[default.extend-words]
+
+[default.extend-identifiers]
