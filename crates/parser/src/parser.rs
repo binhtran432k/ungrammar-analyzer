@@ -10,7 +10,7 @@ use crate::{
     input::Input,
     Edition,
     SyntaxKind::{self, EOF, ERROR, TOMBSTONE},
-    TokenSet,
+    TokenSet, T,
 };
 
 /// `Parser` struct provides the low-level API for
@@ -66,7 +66,10 @@ impl<'t> Parser<'t> {
     }
 
     pub(crate) fn nth_at(&self, n: usize, kind: SyntaxKind) -> bool {
-        self.inp.kind(self.pos + n) == kind
+        match kind {
+            SyntaxKind::END_OF_NODE => self.at_weak_composite2(n, SyntaxKind::IDENT, T![=]),
+            _ => self.inp.kind(self.pos + n) == kind,
+        }
     }
 
     /// Consume the next token if `kind` matches.
@@ -79,18 +82,8 @@ impl<'t> Parser<'t> {
         true
     }
 
-    fn at_composite2(&self, n: usize, k1: SyntaxKind, k2: SyntaxKind) -> bool {
-        self.inp.kind(self.pos + n) == k1
-            && self.inp.kind(self.pos + n + 1) == k2
-            && self.inp.is_joint(self.pos + n)
-    }
-
-    fn at_composite3(&self, n: usize, k1: SyntaxKind, k2: SyntaxKind, k3: SyntaxKind) -> bool {
-        self.inp.kind(self.pos + n) == k1
-            && self.inp.kind(self.pos + n + 1) == k2
-            && self.inp.kind(self.pos + n + 2) == k3
-            && self.inp.is_joint(self.pos + n)
-            && self.inp.is_joint(self.pos + n + 1)
+    fn at_weak_composite2(&self, n: usize, k1: SyntaxKind, k2: SyntaxKind) -> bool {
+        self.inp.kind(self.pos + n) == k1 && self.inp.kind(self.pos + n + 1) == k2
     }
 
     /// Checks if the current token is in `kinds`.
@@ -116,20 +109,6 @@ impl<'t> Parser<'t> {
     pub(crate) fn bump_any(&mut self) {
         let kind = self.nth(0);
         if kind == EOF {
-            return;
-        }
-        self.do_bump(kind, 1);
-    }
-
-    /// Advances the parser by one token, remapping its kind.
-    /// This is useful to create contextual keywords from
-    /// identifiers. For example, the lexer creates a `union`
-    /// *identifier* token, but the parser remaps it to the
-    /// `union` keyword, and keyword is what ends up in the
-    /// final tree.
-    pub(crate) fn bump_remap(&mut self, kind: SyntaxKind) {
-        if self.nth(0) == EOF {
-            // FIXME: panic!?
             return;
         }
         self.do_bump(kind, 1);
@@ -161,6 +140,11 @@ impl<'t> Parser<'t> {
 
     /// Create an error node and consume the next token.
     pub(crate) fn err_recover(&mut self, message: &str, recovery: TokenSet) {
+        if self.at(SyntaxKind::END_OF_NODE) {
+            self.error(message);
+            return;
+        }
+
         if self.at_ts(recovery) {
             self.error(message);
             return;
@@ -226,12 +210,12 @@ impl Marker {
 
 pub(crate) struct CompletedMarker {
     pos: u32,
-    kind: SyntaxKind,
+    _kind: SyntaxKind,
 }
 
 impl CompletedMarker {
     fn new(pos: u32, kind: SyntaxKind) -> Self {
-        CompletedMarker { pos, kind }
+        CompletedMarker { pos, _kind: kind }
     }
 
     /// This method allows to create a new node which starts
@@ -272,7 +256,7 @@ impl CompletedMarker {
         self
     }
 
-    pub(crate) fn kind(&self) -> SyntaxKind {
-        self.kind
+    pub(crate) fn _kind(&self) -> SyntaxKind {
+        self._kind
     }
 }

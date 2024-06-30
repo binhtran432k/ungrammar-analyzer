@@ -17,7 +17,6 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         (")", "R_PAREN"),
     ],
     tokens: &["ERROR", "IDENT", "STRING", "WHITESPACE", "COMMENT"],
-    #[rustfmt::skip]
     nodes: &[
         "GRAMMAR",
         "NODE",
@@ -33,5 +32,7 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         "ALT_RULE",
         "OPT_RULE",
         "REP_RULE",
+        // combined
+        "END_OF_NODE",
     ],
 };

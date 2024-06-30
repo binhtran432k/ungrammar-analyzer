@@ -10,7 +10,7 @@ pub fn print_help() {
             .map(|(code, description)| format!(
                 "{}{} - {}",
                 code,
-                " ".repeat(max_task_len - code.len()), // manual pading
+                " ".repeat(max_task_len - code.len()), // manual padding
                 description
             ))
             .collect::<Vec<String>>()

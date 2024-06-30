@@ -67,10 +67,10 @@ impl Input {
     pub(crate) fn kind(&self, idx: usize) -> SyntaxKind {
         self.kind.get(idx).copied().unwrap_or(SyntaxKind::EOF)
     }
-    pub(crate) fn contextual_kind(&self, idx: usize) -> SyntaxKind {
+    pub(crate) fn _contextual_kind(&self, idx: usize) -> SyntaxKind {
         self.contextual_kind.get(idx).copied().unwrap_or(SyntaxKind::EOF)
     }
-    pub(crate) fn is_joint(&self, n: usize) -> bool {
+    pub(crate) fn _is_joint(&self, n: usize) -> bool {
         let (idx, b_idx) = self.bit_index(n);
         self.joint[idx] & 1 << b_idx != 0
     }
