@@ -65,7 +65,7 @@ impl LexedStr<'_> {
 
         match mem::replace(&mut builder.state, State::Normal) {
             State::PendingExit => {
-                builder.eat_trivias();
+                builder.eat_trivia();
                 (builder.sink)(StrStep::Exit);
             }
             State::PendingEnter | State::Normal => unreachable!(),
@@ -96,7 +96,7 @@ impl Builder<'_, '_> {
             State::PendingExit => (self.sink)(StrStep::Exit),
             State::Normal => (),
         }
-        self.eat_trivias();
+        self.eat_trivia();
         self.do_token(kind, n_tokens as usize);
     }
 
@@ -104,7 +104,7 @@ impl Builder<'_, '_> {
         match mem::replace(&mut self.state, State::Normal) {
             State::PendingEnter => {
                 (self.sink)(StrStep::Enter { kind });
-                // No need to attach trivias to previous node: there is no
+                // No need to attach trivia to previous node: there is no
                 // previous node.
                 return;
             }
@@ -112,16 +112,16 @@ impl Builder<'_, '_> {
             State::Normal => (),
         }
 
-        let n_trivias =
+        let n_trivia =
             (self.pos..self.lexed.len()).take_while(|&it| self.lexed.kind(it).is_trivia()).count();
-        let leading_trivias = self.pos..self.pos + n_trivias;
-        let n_attached_trivias = n_attached_trivias(
+        let leading_trivia = self.pos..self.pos + n_trivia;
+        let n_attached_trivia = n_attached_trivia(
             kind,
-            leading_trivias.rev().map(|it| (self.lexed.kind(it), self.lexed.text(it))),
+            leading_trivia.rev().map(|it| (self.lexed.kind(it), self.lexed.text(it))),
         );
-        self.eat_n_trivias(n_trivias - n_attached_trivias);
+        self.eat_n_trivia(n_trivia - n_attached_trivia);
         (self.sink)(StrStep::Enter { kind });
-        self.eat_n_trivias(n_attached_trivias);
+        self.eat_n_trivia(n_attached_trivia);
     }
 
     fn exit(&mut self) {
@@ -132,7 +132,7 @@ impl Builder<'_, '_> {
         }
     }
 
-    fn eat_trivias(&mut self) {
+    fn eat_trivia(&mut self) {
         while self.pos < self.lexed.len() {
             let kind = self.lexed.kind(self.pos);
             if !kind.is_trivia() {
@@ -142,7 +142,7 @@ impl Builder<'_, '_> {
         }
     }
 
-    fn eat_n_trivias(&mut self, n: usize) {
+    fn eat_n_trivia(&mut self, n: usize) {
         for _ in 0..n {
             let kind = self.lexed.kind(self.pos);
             assert!(kind.is_trivia());
@@ -157,9 +157,9 @@ impl Builder<'_, '_> {
     }
 }
 
-fn n_attached_trivias<'a>(
+fn n_attached_trivia<'a>(
     _kind: SyntaxKind,
-    _trivias: impl Iterator<Item = (SyntaxKind, &'a str)>,
+    _trivia: impl Iterator<Item = (SyntaxKind, &'a str)>,
 ) -> usize {
     0
 }

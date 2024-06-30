@@ -4,6 +4,7 @@ use xtask::gen;
 use xtask::help;
 use xtask::DynError;
 
+#[allow(clippy::print_stderr)]
 fn main() {
     if let Err(e) = try_main() {
         eprintln!("{}", e);

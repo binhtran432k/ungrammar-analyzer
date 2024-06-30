@@ -4,7 +4,7 @@ use sourcegen::{add_preamble, ensure_file_contents, project_root, reformat};
 
 use super::ast_src::{KindsSrc, KINDS_SRC};
 
-pub fn generate() {
+pub(crate) fn generate() {
     let syntax_kinds = generate_syntax_kinds(KINDS_SRC);
     let syntax_kinds_file = project_root().join("crates/parser/src/syntax_kind/generated.rs");
     ensure_file_contents(syntax_kinds_file.as_path(), &syntax_kinds);

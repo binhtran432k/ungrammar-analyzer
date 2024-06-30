@@ -35,6 +35,7 @@ pub enum SyntaxKind {
     ALT_RULE,
     OPT_RULE,
     REP_RULE,
+    END_OF_NODE,
     #[doc(hidden)]
     __LAST,
 }

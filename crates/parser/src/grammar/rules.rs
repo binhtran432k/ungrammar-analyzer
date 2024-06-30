@@ -7,12 +7,12 @@ const RULE_FIRST: TokenSet = atom::ATOM_RULE_FIRST;
 // test bp
 // SOURCE = 'a'? | 'b'* | 'c'
 mod bp {
-    pub const NONE: u8 = 0;
-    pub const SMALLEST: u8 = 1;
-    pub const ALT: u8 = 1;
-    pub const SEQ: u8 = 2;
-    pub const OPT: u8 = 3;
-    pub const REP: u8 = 3;
+    pub(crate) const NONE: u8 = 0;
+    pub(crate) const SMALLEST: u8 = 1;
+    pub(crate) const ALT: u8 = 1;
+    pub(crate) const SEQ: u8 = 2;
+    pub(crate) const OPT: u8 = 3;
+    pub(crate) const REP: u8 = 3;
 }
 
 pub(super) fn rule(p: &mut Parser<'_>) -> Option<CompletedMarker> {
@@ -54,13 +54,8 @@ fn current_op(p: &Parser<'_>) -> (u8, SyntaxKind, Associativity) {
 fn rule_bp(p: &mut Parser<'_>, m: Option<Marker>, bp: u8) -> Option<CompletedMarker> {
     let m = m.unwrap_or_else(|| p.start());
 
-    if !p.at_ts(RULE_FIRST) {
+    if !p.at_ts(RULE_FIRST) || p.at(END_OF_NODE) {
         p.err_recover("expected rule", atom::RULE_RECOVERY_SET);
-        m.abandon(p);
-        return None;
-    }
-    if is_end_of_node(p) {
-        p.error("expected rule");
         m.abandon(p);
         return None;
     }
@@ -73,9 +68,9 @@ fn rule_bp(p: &mut Parser<'_>, m: Option<Marker>, bp: u8) -> Option<CompletedMar
     };
 
     loop {
-        if p.at_ts(RULE_FIRST) && !is_end_of_node(p) {
+        if p.at_ts(RULE_FIRST) && !p.at(END_OF_NODE) {
             let mut count = 0;
-            while p.at_ts(RULE_FIRST) && !is_end_of_node(p) {
+            while p.at_ts(RULE_FIRST) && !p.at(END_OF_NODE) {
                 if rule_bp(p, None, bp::SEQ).is_none() {
                     break;
                 }
@@ -124,11 +119,6 @@ fn rule_bp(p: &mut Parser<'_>, m: Option<Marker>, bp: u8) -> Option<CompletedMar
         lhs = m.complete(p, op_kind)
     }
     Some(lhs)
-}
-
-fn is_end_of_node(p: &Parser<'_>) -> bool {
-    let la = p.nth(1);
-    matches!((p.current(), la), (IDENT, T![=]))
 }
 
 fn lhs(p: &mut Parser<'_>) -> Option<CompletedMarker> {
