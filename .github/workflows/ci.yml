@@ -105,9 +105,6 @@ jobs:
           for target in ${{ env.targets }}; do
             cargo check --target=$target --all-targets
           done
-          for target in ${{ env.targets_ide }}; do
-            cargo check -p ide --target=$target --all-targets
-          done
 
   typo-check:
     name: Typo Check
