@@ -1,3 +1,4 @@
+#[allow(clippy::print_stderr)]
 pub fn print_help() {
     let tasks = [("codegen", "Generate codes from ungrammar")];
 
