@@ -1,2 +1,2 @@
-*.ungram text eol=lf
+* text eol=lf
 invalid_ending.ungram text eol=crlf
