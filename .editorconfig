@@ -2,3 +2,6 @@ root = true
 
 [*.{rast,ungram}]
 indent_size = 2
+
+[*.{js,ts,json,markdown}]
+indent_size = 2

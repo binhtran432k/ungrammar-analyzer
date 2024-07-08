@@ -1,0 +1,38 @@
+{
+  "name": "ungrammar-analyzer-monorepo",
+  "private": true,
+  "scripts": {
+    "typecheck": "npm -w ungrammar-analyzer run typecheck",
+    "format:check": "npm -w ungrammar-analyzer run format:check",
+    "test": "npm -w ungrammar-analyzer run test",
+    "lint": "npm -w ungrammar-analyzer run lint",
+    "package": "npm -w ungrammar-analyzer run package",
+    "watch:tsc": "npm -w ungrammar-analyzer run watch:tsc",
+    "watch:esbuild": "npm -w ungrammar-analyzer run watch:esbuild"
+  },
+  "main": "./packages/code/dist/desktop/extension",
+  "browser": "./packages/code/dist/web/extension",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.helloWorld",
+        "title": "Hello World"
+      }
+    ]
+  },
+  "workspaces": [
+    "packages/code"
+  ],
+  "devDependencies": {
+    "@eslint/js": "^8.57.0",
+    "@types/eslint": "^8.56.10",
+    "@types/eslint__js": "^8.42.3",
+    "@types/node": "^20.14.10",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^7.15.0"
+  }
+}

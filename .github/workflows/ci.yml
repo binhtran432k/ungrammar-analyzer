@@ -11,6 +11,29 @@ env:
   RUSTUP_MAX_RETRIES: 10
 
 jobs:
+  changes:
+    name: Changes
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      rust: ${{ steps.filter.outputs.rust }}
+      typescript: ${{ steps.filter.outputs.typescript }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            rust:
+              - 'Cargo.toml'
+              - 'rustfmt.toml'
+              - 'crates/**'
+              - 'xtask/**'
+            typescript:
+              - 'package.json'
+              - 'packages/**'
+
   rust:
     if: github.repository == 'binhtran432k/ungrammar-analyzer'
     name: Rust
@@ -27,59 +50,66 @@ jobs:
 
     steps:
       - name: Checkout repository
+        if: needs.changes.outputs.rust == 'true'
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Install Rust toolchain
+        if: needs.changes.outputs.rust == 'true'
         run: |
           rustup update --no-self-update ${{ env.RUST_CHANNEL }}
           rustup default ${{ env.RUST_CHANNEL }}
           rustup component add --toolchain ${{ env.RUST_CHANNEL }} rustfmt rust-src
+
       # https://github.com/actions-rust-lang/setup-rust-toolchain/blob/main/rust.json
       - name: Install Rust Problem Matcher
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && needs.changes.outputs.rust == 'true'
         run: echo "::add-matcher::.github/rust.json"
 
       - name: Cache Dependencies
-        uses: Swatinem/rust-cache@9bdad043e88c75890e36ad3bbc8d27f0090dd609
+        if: needs.changes.outputs.rust == 'true'
+        uses: Swatinem/rust-cache@v2
         with:
           key: ${{ env.RUST_CHANNEL }}
 
       - name: Bump opt-level
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && needs.changes.outputs.rust == 'true'
         run: sed -i '/\[profile.dev]/a opt-level=1' Cargo.toml
 
       - name: Compile (tests)
+        if: needs.changes.outputs.rust == 'true'
         run: cargo test --no-run --locked ${{ env.USE_SYSROOT_ABI }}
 
       # It's faster to `test` before `build` ¯\_(ツ)_/¯
       - name: Compile
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && needs.changes.outputs.rust == 'true'
         run: cargo build --quiet ${{ env.USE_SYSROOT_ABI }}
 
       - name: Test
-        if: matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest' || github.event_name == 'push'
+        if: (matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest' || github.event_name == 'push') && needs.changes.outputs.rust == 'true'
         run: cargo test ${{ env.USE_SYSROOT_ABI }} -- --nocapture --quiet
 
       - name: Switch to stable toolchain
+        if: needs.changes.outputs.rust == 'true'
         run: |
           rustup update --no-self-update stable
           rustup component add --toolchain stable rust-src clippy
           rustup default stable
 
       - name: clippy
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-latest' && needs.changes.outputs.rust == 'true'
         run: cargo clippy --all-targets -- -D clippy::disallowed_macros -D clippy::dbg_macro -D clippy::todo -D clippy::print_stdout -D clippy::print_stderr
 
       - name: rustfmt
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && needs.changes.outputs.rust == 'true'
         run: cargo fmt -- --check
 
   # Weird targets to catch non-portable code
   rust-cross:
     if: github.repository == 'binhtran432k/ungrammar-analyzer'
     name: Rust Cross
+    needs: changes
     runs-on: ubuntu-latest
 
     env:
@@ -90,21 +120,85 @@ jobs:
 
     steps:
       - name: Checkout repository
+        if: needs.changes.outputs.rust == 'true'
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
+        if: needs.changes.outputs.rust == 'true'
         run: |
           rustup update --no-self-update stable
           rustup target add ${{ env.targets }} ${{ env.targets_ide }}
 
       - name: Cache Dependencies
-        uses: Swatinem/rust-cache@9bdad043e88c75890e36ad3bbc8d27f0090dd609
+        if: needs.changes.outputs.rust == 'true'
+        uses: Swatinem/rust-cache@v2
 
       - name: Check
+        if: needs.changes.outputs.rust == 'true'
         run: |
           for target in ${{ env.targets }}; do
             cargo check --target=$target --all-targets
           done
+
+  typescript:
+    needs: changes
+    if: github.repository == 'binhtran432k/ungrammar-analyzer'
+    name: TypeScript
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        if: needs.changes.outputs.typescript == 'true'
+
+      - name: Install Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+        if: needs.changes.outputs.typescript == 'true'
+
+      - name: Install xvfb
+        if: matrix.os == 'ubuntu-latest' && needs.changes.outputs.typescript == 'true'
+        run: sudo apt-get install -y xvfb
+
+      - run: npm ci
+        if: needs.changes.outputs.typescript == 'true'
+
+      #    - run: npm audit || { sleep 10 && npm audit; } || { sleep 30 && npm audit; }
+      #      if: runner.os == 'Linux'
+      #      working-directory: ./editors/code
+
+      # If this steps fails, your code's type integrity might be wrong at some places at TypeScript level.
+      - run: npm run typecheck
+        if: needs.changes.outputs.typescript == 'true'
+
+      # You may fix the code automatically by running `npm run lint:fix` if this steps fails.
+      - run: npm run lint
+        if: needs.changes.outputs.typescript == 'true'
+
+      # To fix this steps, please run `npm run format`.
+      - run: npm run format:check
+        if: needs.changes.outputs.typescript == 'true'
+
+      - name: Run VS Code tests (Linux)
+        if: matrix.os == 'ubuntu-latest' && needs.changes.outputs.typescript == 'true'
+        env:
+          VSCODE_CLI: 1
+        run: xvfb-run npm test
+
+      - name: Run VS Code tests (Windows)
+        if: matrix.os == 'windows-latest' && needs.changes.outputs.typescript == 'true'
+        env:
+          VSCODE_CLI: 1
+        run: npm test
+
+      - run: npm run package
+        if: needs.changes.outputs.typescript == 'true'
 
   typo-check:
     name: Typo Check
