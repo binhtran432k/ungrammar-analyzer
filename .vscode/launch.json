@@ -8,11 +8,13 @@
     {
       "name": "Run Extension",
       "type": "extensionHost",
+      "debugWebWorkerHost": true,
       "request": "launch",
-      "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/packages/code"],
-      "outFiles": ["${workspaceFolder}/packages/code/dist/**/*.js"],
-      "autoAttachChildProcesses": true,
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/packages/code",
+        "--extensionDevelopmentKind=web"
+      ],
+      "outFiles": ["${workspaceFolder}/packages/code/dist/web/**/*.js"],
       "preLaunchTask": {
         "type": "npm",
         "script": "package"

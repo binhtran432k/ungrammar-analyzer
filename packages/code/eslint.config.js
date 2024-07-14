@@ -13,8 +13,21 @@ module.exports = [
       },
     },
   },
+  {
+    files: ["**/test/suite/*.ts"],
+    rules: {
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+    },
+  },
   eslintConfigPrettier,
   {
-    ignores: ["**/out/", "**/dist/", "**/.vscode-test/", "esbuild.js", "eslint.config.js"],
+    ignores: [
+      "**/dist/",
+      "**/.vscode-test/",
+      "**/.vscode-test-web/",
+      "esbuild.js",
+      "eslint.config.js",
+    ],
   },
 ];

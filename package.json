@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "typecheck": "npm -w ungrammar-analyzer run typecheck",
+    "format": "npm -w ungrammar-analyzer run format",
     "format:check": "npm -w ungrammar-analyzer run format:check",
     "test": "npm -w ungrammar-analyzer run test",
     "lint": "npm -w ungrammar-analyzer run lint",
